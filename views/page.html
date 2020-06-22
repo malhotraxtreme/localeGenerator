@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>i18n Localizer</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <style type="text/css">
+        .nav {
+            background-color: #282c34;
+            width: 100%;
+            height: 70px;
+            color: white;
+            font-size: 2em;
+        }
+
+        .body {
+            padding: 20px;
+        }
+
+        .logo {
+            padding: 10px;
+            margin-left: 20px;
+        }
+
+        .helperTxt {
+            padding: 50px;
+            text-align: center;
+        }
+
+        .langarea{
+            background-color: bisque;
+
+        }
+    </style>
+
+
+</head>
+
+<body>
+
+
+    <div class="App">
+        <div class="nav">
+            <div class="logo">i18n-Localizer</div>
+        </div>
+        <div class="body row">
+            <div class="helperTxt">
+                Input the word(s) to be localized in the translation box and the text to
+                surround the word(s) should go on either side. </div>
+
+            <div class="input-field col s4">
+                <!-- <label htmlFor="pre">Pre Text</label> -->
+                <input type="text" id="pre" placeholder="Pre Fix" />
+            </div>
+            <div class="input-field col s3">
+                <!-- <label htmlFor="translate">Translate Text</label> -->
+                <input type="text" id="translate"  placeholder="English text to be translated" />
+            </div>
+
+            <div class="input-field col s4">
+                <!-- <label htmlFor="post">Post Text</label> -->
+                <input type="text" id="post" placeholder="Post Fix" />
+            </div>
+
+            <div class="input-field col s1">
+                <button class="waves-effect waves-light btn" onclick="submitform()">Go</button>
+            </div>
+
+            <div id="output" class="row" style="margin: 20px;">
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+        function copyTxt(id) {
+
+            var copyText = document.getElementById(id);
+
+
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+
+            document.execCommand("copy");
+
+            /* Alert the copied text */
+            console.log("Copied the text: " + copyText.value);
+        }
+
+
+
+        function submitform() {
+            document.getElementById("output").innerHTML = "";
+
+            var pre = document.getElementById("pre").value;
+            var post = document.getElementById("post").value;
+
+            //alert("Sending Json");
+            var xhr = new XMLHttpRequest();
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    var op = document.getElementById("output");
+
+                    let respArr = JSON.parse(xhr.responseText).resp;
+                    let langArr = JSON.parse(xhr.responseText).languages;
+                    for (let i = 0; i < respArr.length; i++) {
+
+                        var divnode = document.createElement("div");
+                        divnode.setAttribute("class", "row");
+
+                        var langDiv = document.createElement("div");
+                        // node.setAttribute("type", "text");
+                        langDiv.innerHTML = langArr[i];
+                        langDiv.setAttribute("class", "langarea col s1");
+                        // node.setAttribute("id", i);
+
+                        var node = document.createElement("INPUT");
+                        node.setAttribute("type", "text");
+                        node.setAttribute("value", pre + respArr[i] + post);
+                        node.setAttribute("class", " offset-s1 col s7");
+                        node.setAttribute("id", i);
+
+                        var btn = document.createElement("BUTTON");
+                        btn.innerHTML = (i+1)+" Copy";
+                        btn.setAttribute("class", "waves-effect waves-light btn offset-s1 col s2");
+                        btn.setAttribute("onclick", "copyTxt("+i+")")
+
+                        divnode.appendChild(langDiv);
+                        divnode.appendChild(node);
+                        divnode.appendChild(btn);
+                        op.appendChild(divnode);
+
+                    }
+
+
+
+                }
+            }
+
+            xhr.open('post', '/translate', true);
+            xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+            var j = {
+                "pre": document.getElementById('pre').value,
+                "translate": document.getElementById('translate').value,
+                "post": document.getElementById('post').value
+            };
+            xhr.send(JSON.stringify(j));
+        }
+
+
+    </script>
+
+
+</body>
+
+</html>
