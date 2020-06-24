@@ -25,9 +25,7 @@ app.post('/translate', (req, res) => {
 
     console.log(req.body);
 
-    var pre = req.body.pre;
     var tranlsationStr = req.body.translate;
-    var post = req.body.post;
 
     var respArr = [];
 

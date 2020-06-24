@@ -150,9 +150,7 @@
             xhr.open('post', '/translate', true);
             xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
             var j = {
-                "pre": document.getElementById('pre').value,
                 "translate": document.getElementById('translate').value,
-                "post": document.getElementById('post').value
             };
             xhr.send(JSON.stringify(j));
         }
